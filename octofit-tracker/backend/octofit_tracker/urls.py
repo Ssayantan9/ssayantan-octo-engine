@@ -15,6 +15,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+import os
 from rest_framework import routers
 from . import views
 from rest_framework.decorators import api_view
@@ -42,4 +43,17 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include(router.urls)),
     path('', api_root, name='api-root'),
+]
+
+# Dynamically build the base URL using the $CODESPACE_NAME environment variable
+codespace_name = os.environ.get('CODESPACE_NAME')
+
+if codespace_name:
+    BASE_URL = f"https://{codespace_name}-8000.app.github.dev/"
+else:
+    BASE_URL = "http://localhost:8000/"
+
+urlpatterns = [
+    path('admin/', admin.site.urls),
+    path('api/', include('octofit_tracker.api_urls')),
 ]
